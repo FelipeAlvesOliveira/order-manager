@@ -28,7 +28,6 @@ public class OrderService {
     private static final Logger logger = LogManager.getLogger(OrderService.class);
 
     public List<OrderDTO> getOrders() {
-        //TODO FELIPE: ADD PAGINATION
         return orderRepository.findAll()
                 .stream()
                 .map(Order::toDTO)
@@ -43,7 +42,7 @@ public class OrderService {
     public OrderDTO createOrder(OrderDTO orderDTO) {
         Order order = Order.fromDTO(orderDTO);
         order.setCreationDate(new Date());
-        order.setStatus(OrderStatus.WAITING.value);
+        order.setStatus(OrderStatus.WAITING.name());
         order = orderRepository.save(order);
         // log order created
         logger.info(String.format("Order created to item %s and quantity %s",
@@ -57,7 +56,6 @@ public class OrderService {
             throws ChangeNotAllowed, EntityNotFound {
         Order order = getEntityByIdIfExists(id);
         checkCanChangeOrder(order);
-        //TODO FELIPE: CHECK MORE VALIDATIONS ABOUT THE ORDER DTO, EXAMPLE, QTD SHOULD BE > 0
         Order.mergeWithDTO(order, orderDTO);
         order = orderRepository.save(order);
         // log order updated

@@ -3,8 +3,6 @@ package com.example.ordermanager.controller;
 import com.example.ordermanager.entity.User;
 import com.example.ordermanager.exception.EntityNotFound;
 import com.example.ordermanager.service.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,17 +19,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-//TODO FELIPE: IF WE HAVE TIME, CHANGE USER TO USERDTO
     @Autowired
     UserService userService;
 
-    private static final Logger logger = LogManager.getLogger(UserController.class);
-
     @GetMapping
     public ResponseEntity<List<User>> getUsers() {
-        logger.info("info getUsers");
-        logger.warn("warn getUsers");
-
         List<User> users = userService.getUsers();
         return ResponseEntity.ok(users);
     }

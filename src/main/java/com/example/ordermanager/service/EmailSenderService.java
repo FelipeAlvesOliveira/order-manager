@@ -5,6 +5,7 @@ import com.example.ordermanager.entity.Item;
 import com.example.ordermanager.entity.Order;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,12 @@ import java.util.Properties;
 public class EmailSenderService implements NotificationSender {
     private static final Logger logger = LogManager.getLogger(EmailSenderService.class);
 
+    @Value("${email.from.email}")
+    private String emailFrom;
+
+    @Value("${email.from.password}")
+    private String emailFromPassword;
+
     @Override
     public void sendNotification(Order order) {
         String emailTo = order.getUser().getEmail();
@@ -31,16 +38,11 @@ public class EmailSenderService implements NotificationSender {
         String body = String.format("The order %s requesting item '%s' with quantity %s was delivered",
                 order.getId(), item.getName(), order.getQuantity());
 
-        //TODO FELIPE: GET IT FROM PROPERTIES
-        String emailFrom = "testprograming@outlook.com";
-        String password = "Tijolo+-";
-
-        Session session = buildSession(emailFrom, password);
+        Session session = buildSession(emailFrom, emailFromPassword);
         sendEmail(session, emailFrom, emailTo,subject, body);
     }
 
     private Session buildSession(String emailFrom, String password) {
-        //TODO FELIPE: GET IT FROM PROPERTIES
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");

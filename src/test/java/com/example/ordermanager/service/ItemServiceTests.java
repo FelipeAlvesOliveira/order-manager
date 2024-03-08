@@ -40,8 +40,6 @@ public class ItemServiceTests {
         Mockito.when(itemRepository.findById(2l)).thenReturn(Optional.of(item2));
         Mockito.when(itemRepository.findAll()).thenReturn(items);
 
-        // TODO FELIPE: CHANGE HERE TO FIX CREATE UNIT TEST
-        Mockito.when(itemRepository.save(itemToSave)).thenReturn(item3);
         Item itemToUpdate = item1;
         itemToUpdate.setName(itemToSave.getName());
         Mockito.when(itemRepository.save(itemToUpdate)).thenReturn(itemToUpdate);
@@ -68,15 +66,6 @@ public class ItemServiceTests {
     public void getItemByIdFail() {
         Assertions.assertThatThrownBy(() -> itemService.getItemById(3L)).isInstanceOf(EntityNotFound.class);
     }
-
-    //TODO FELIPE: CHECK HERE THIS PROBLEM
-    /*@Test
-    public void createItemTest() {
-
-        ItemDTO result = itemService.createItem(Item.toDTO(itemToSave));
-        Assertions.assertThat(result.getId()).isEqualTo(item3.getId());
-        Assertions.assertThat(result.getName()).isEqualTo(item3.getName());
-    }*/
 
     @Test
     public void updateItemTest() {

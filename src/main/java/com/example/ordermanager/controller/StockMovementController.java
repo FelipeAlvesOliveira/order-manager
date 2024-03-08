@@ -26,7 +26,6 @@ public class StockMovementController {
 
     @GetMapping
     public ResponseEntity<List<StockMovementDTO>> getAllStockMovements() {
-        //TODO FELIPE: ADD PAGINATION; ADD TOO IN ALL OTHERS GET ALL
         List<StockMovementDTO> stockMovementList = stockMovementService
                 .getAllStockMovements();
         return ResponseEntity.ok(stockMovementList);

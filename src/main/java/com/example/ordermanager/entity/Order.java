@@ -25,7 +25,7 @@ public class Order {
     @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     private Item item;
     private long quantity;
-    @ManyToOne(cascade = CascadeType.DETACH)//TODO FELIPE: CHECK THIS CASCADE HERE
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
     private String status;

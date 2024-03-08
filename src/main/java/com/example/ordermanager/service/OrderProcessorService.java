@@ -40,7 +40,7 @@ public class OrderProcessorService {
                  *  this way we will not process recent orders and skip existing orders
                  */
                 List<Order> orderList = orderRepository
-                        .findByItemIdAndStatus(itemId,OrderStatus.WAITING.value);
+                        .findByItemIdAndStatus(itemId,OrderStatus.WAITING.name());
                 if (orderList != null && !orderList.isEmpty()) {
                     for (Order order : orderList) {
                         // get the list of stock movements available to deliver the order
@@ -83,7 +83,7 @@ public class OrderProcessorService {
                         // if the order is delivered, we will persist the stock movements changes
                         if (orderQuantity == 0) {
                             // update order
-                            order.setStatus(OrderStatus.FINISHED.value);
+                            order.setStatus(OrderStatus.FINISHED.name());
                             order = orderRepository.save(order);
                             // update used stock movements
                             stockMovementRepository.saveAll(movementsToDeliverOrder);

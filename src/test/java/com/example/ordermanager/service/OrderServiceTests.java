@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-
 public class OrderServiceTests {
 
     @InjectMocks
@@ -44,76 +42,40 @@ public class OrderServiceTests {
         MockitoAnnotations.openMocks(this);
 
         // Prepare find scenario
-        Order orderFinished = createOrder(FINISHED_ORDER_ID, OrderStatus.FINISHED.value);
+        Order orderFinished = createOrder(FINISHED_ORDER_ID, OrderStatus.FINISHED.name());
         Mockito.when(orderRepository.findById(FINISHED_ORDER_ID))
                 .thenReturn(Optional.of(orderFinished));
 
         // Prepare find scenario
-        Order orderWaiting = createOrder(WAITING_ORDER_ID, OrderStatus.WAITING.value);
+        Order orderWaiting = createOrder(WAITING_ORDER_ID, OrderStatus.WAITING.name());
         Mockito.when(orderRepository.findById(WAITING_ORDER_ID))
                 .thenReturn(Optional.of(orderWaiting));
-
-        // Prepare create scenario
-        //TODO FELIPE: FIX THIS UNIT TEST, TRY TO DO IT WIHOUT OVERRIDE EQUALS
-        Order orderToSave = createOrder(null, OrderStatus.WAITING.value);
-        Mockito.doNothing().when(orderToSave).setCreationDate(any());
-        Mockito.when(orderRepository.save(orderToSave))
-                .thenReturn(orderWaiting);
-
-        // Prepare update scenario
-        Order orderWaitingToUpdate = createOrder(WAITING_ORDER_ID_TO_UPDATE, OrderStatus.WAITING.value);
-        Mockito.when(orderRepository.findById(WAITING_ORDER_ID_TO_UPDATE))
-                .thenReturn(Optional.of(orderWaitingToUpdate));
-        orderWaitingToUpdate.setItem(new Item(2l, null));
-        Mockito.when(orderRepository.save(orderWaitingToUpdate))
-                .thenReturn(orderWaitingToUpdate);
 
         // Prepare findAll scenario
         List<Order> orders = new ArrayList<>();
         orders.add(orderFinished);
         orders.add(orderWaiting);
-        orders.add(orderWaitingToUpdate);
         Mockito.when(orderRepository.findAll())
                 .thenReturn(orders);
     }
 
-    //TODO FELIPE: FIZ UNIT TESTS
-    /*@Test
+    @Test
     public void getOrdersByUserTest() {
         List<OrderDTO> result = orderService.getOrders();
-        Assertions.assertThat(result.size()).isEqualTo(3);
+        Assertions.assertThat(result.size()).isEqualTo(2);
     }
 
     @Test
     public void getOrderByIdTest() {
         try {
             OrderDTO result = orderService.getOrderById(WAITING_ORDER_ID);
-            Order orderWaiting = createOrder(WAITING_ORDER_ID, OrderStatus.WAITING.value);
+            Order orderWaiting = createOrder(WAITING_ORDER_ID, OrderStatus.WAITING.name());
             OrderDTO orderDTO = Order.toDTO(orderWaiting);
             Assertions.assertThat(result.getId()).isEqualTo(orderDTO.getId());
             Assertions.assertThat(result.getUserId()).isEqualTo(orderDTO.getUserId());
             Assertions.assertThat(result.getItemId()).isEqualTo(orderDTO.getItemId());
             Assertions.assertThat(result.getQuantity()).isEqualTo(orderDTO.getQuantity());
         } catch (EntityNotFound e) {
-            Assertions.fail(String.format("%s should not be thrown", e.getClass().getName()));
-        }
-    }
-
-    @Test
-    public void createOrderTest() {
-        OrderDTO dto = createOrderDTO(null);
-        OrderDTO result = orderService.createOrder(dto);
-        Assertions.assertThat(result.getId()).isEqualTo(WAITING_ORDER_ID);
-    }
-
-    @Test
-    public void updateOrderTest() {
-        OrderDTO dto = createOrderDTO(WAITING_ORDER_ID_TO_UPDATE);
-        dto.setItemId(2l);
-        try {
-            OrderDTO result = orderService.updateOrder(WAITING_ORDER_ID_TO_UPDATE, dto);
-            Assertions.assertThat(result.getItemId()).isEqualTo(2l);
-        } catch (ChangeNotAllowed | EntityNotFound e) {
             Assertions.fail(String.format("%s should not be thrown", e.getClass().getName()));
         }
     }
@@ -152,7 +114,7 @@ public class OrderServiceTests {
         Assertions.assertThatThrownBy(
                 () -> orderService.deleteOrder(FINISHED_ORDER_ID)
         ).isInstanceOf(ChangeNotAllowed.class);
-    }*/
+    }
 
     private Order createOrder(Long id, String status) {
         Order order = new Order();

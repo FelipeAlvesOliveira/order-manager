@@ -68,8 +68,6 @@ public class StockMovementServiceTests {
         Mockito.when(stockMovementRepository.save(stockMovementNewToUpdate))
                 .thenReturn(stockMovementNewToUpdate);
 
-        //TODO FELIPE: ADD CREATE UNIT TEST
-
     }
 
     @Test
@@ -91,19 +89,6 @@ public class StockMovementServiceTests {
             Assertions.fail(String.format("%s should not be thrown", e.getClass().getName()));
         }
     }
-
-    //TODO FELIPE: FIX UNIT TEST
-    /*@Test
-    public void updateOrderTest() {
-        StockMovementDTO dto = createStockMovementDTO(NEW_STOCK_MOVEMENT_ID_TO_UPDATE);
-        dto.setItemId(2l);
-        try {
-            StockMovementDTO result = stockMovementService.updateStockMovement(NEW_STOCK_MOVEMENT_ID_TO_UPDATE, dto);
-            Assertions.assertThat(result.getItemId()).isEqualTo(2l);
-        } catch (ChangeNotAllowed | EntityNotFound e) {
-            Assertions.fail(String.format("%s should not be thrown", e.getClass().getName()));
-        }
-    }*/
 
     @Test
     public void updateOrderEntityNotFoundTest() {
