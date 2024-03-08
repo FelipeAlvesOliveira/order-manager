@@ -46,9 +46,16 @@ public class StockMovementController {
     }
 
     @PostMapping
-    public ResponseEntity<StockMovementDTO> createStockMovements(
+    public ResponseEntity<?> createStockMovements(
             @RequestBody(required = true) StockMovementDTO dto) {
-        StockMovementDTO dtoCreated = stockMovementService.createStockMovement(dto);
+        StockMovementDTO dtoCreated = null;
+        try {
+            dtoCreated = stockMovementService.createStockMovement(dto);
+        } catch (ChangeNotAllowed e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
         return ResponseEntity.status(201)
                 .body(dtoCreated);
     }

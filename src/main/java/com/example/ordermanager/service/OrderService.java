@@ -1,11 +1,15 @@
 package com.example.ordermanager.service;
 
+import com.example.ordermanager.entity.Item;
 import com.example.ordermanager.entity.Order;
 import com.example.ordermanager.entity.OrderDTO;
 import com.example.ordermanager.entity.OrderStatus;
+import com.example.ordermanager.entity.User;
 import com.example.ordermanager.exception.ChangeNotAllowed;
 import com.example.ordermanager.exception.EntityNotFound;
+import com.example.ordermanager.repository.ItemRepository;
 import com.example.ordermanager.repository.OrderRepository;
+import com.example.ordermanager.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,12 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     OrderProcessorService orderProcessorService;
@@ -39,7 +49,8 @@ public class OrderService {
         return Order.toDTO(order);
     }
 
-    public OrderDTO createOrder(OrderDTO orderDTO) {
+    public OrderDTO createOrder(OrderDTO orderDTO) throws ChangeNotAllowed {
+        validationEntity(orderDTO);
         Order order = Order.fromDTO(orderDTO);
         order.setCreationDate(new Date());
         order.setStatus(OrderStatus.WAITING.name());
@@ -56,6 +67,7 @@ public class OrderService {
             throws ChangeNotAllowed, EntityNotFound {
         Order order = getEntityByIdIfExists(id);
         checkCanChangeOrder(order);
+        validationEntity(orderDTO);
         Order.mergeWithDTO(order, orderDTO);
         order = orderRepository.save(order);
         // log order updated
@@ -84,6 +96,22 @@ public class OrderService {
     private void checkCanChangeOrder(Order order) throws ChangeNotAllowed {
         if (OrderStatus.FINISHED.equals(OrderStatus.valueOf(order.getStatus()))) {
             throw new ChangeNotAllowed(String.format("Order with id %s is already finished", order.getId()));
+        }
+    }
+
+    private void validationEntity(OrderDTO dto) throws ChangeNotAllowed {
+        Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
+        if (!optionalItem.isPresent()) {
+            throw new ChangeNotAllowed(String.format("item %s invalid", dto.getItemId()));
+        }
+
+        Optional<User> optionalUser = userRepository.findById(dto.getUserId());
+        if (!optionalUser.isPresent()) {
+            throw new ChangeNotAllowed(String.format("user %s invalid", dto.getUserId()));
+        }
+
+        if (dto.getQuantity() <= 0) {
+            throw new ChangeNotAllowed("quantity must be greater than 0");
         }
     }
 }

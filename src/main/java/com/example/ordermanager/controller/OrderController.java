@@ -44,8 +44,15 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody(required = true) OrderDTO dto) {
-        OrderDTO dtoCreated = orderService.createOrder(dto);
+    public ResponseEntity<?> createOrder(@RequestBody(required = true) OrderDTO dto) {
+        OrderDTO dtoCreated = null;
+        try {
+            dtoCreated = orderService.createOrder(dto);
+        } catch (ChangeNotAllowed e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
         return ResponseEntity.status(201)
                 .body(dtoCreated);
     }

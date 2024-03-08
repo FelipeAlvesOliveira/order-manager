@@ -1,4 +1,4 @@
-FROM openjdk:17
+FROM openjdk:8
 
 #define a work diretory
 WORKDIR /app

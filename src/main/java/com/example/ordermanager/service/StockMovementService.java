@@ -1,10 +1,12 @@
 package com.example.ordermanager.service;
 
+import com.example.ordermanager.entity.Item;
 import com.example.ordermanager.entity.StockMovement;
 import com.example.ordermanager.entity.StockMovementDTO;
 import com.example.ordermanager.entity.StockMovementStatus;
 import com.example.ordermanager.exception.ChangeNotAllowed;
 import com.example.ordermanager.exception.EntityNotFound;
+import com.example.ordermanager.repository.ItemRepository;
 import com.example.ordermanager.repository.StockMovementRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +23,9 @@ public class StockMovementService {
 
     @Autowired
     StockMovementRepository stockMovementRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
 
     @Autowired
     OrderProcessorService orderProcessorService;
@@ -45,7 +50,8 @@ public class StockMovementService {
         return StockMovement.toDTO(getEntityByIdIfExists(id));
     }
 
-    public StockMovementDTO createStockMovement(StockMovementDTO dto) {
+    public StockMovementDTO createStockMovement(StockMovementDTO dto) throws ChangeNotAllowed {
+        validationEntity(dto);
         StockMovement stockMovement = StockMovement.fromDTO(dto);
         stockMovement.setCreationDate(new Date());
         stockMovement.setStatus(StockMovementStatus.NEW.name());
@@ -61,6 +67,7 @@ public class StockMovementService {
             throws EntityNotFound, ChangeNotAllowed {
         StockMovement stockMovement = getEntityByIdIfExists(id);
         checkCanChangeStockMovement(stockMovement);
+        validationEntity(dto);
         StockMovement.merge(stockMovement, dto);
         stockMovement = stockMovementRepository.save(stockMovement);
         // log stock movement updated
@@ -94,6 +101,17 @@ public class StockMovementService {
                     String.format("StockMovement with id %s can not be changed because it status is %s"
                             , stockMovement.getId()
                             , stockMovement.getStatus()));
+        }
+    }
+
+    private void validationEntity(StockMovementDTO dto) throws ChangeNotAllowed {
+        Optional<Item> optionalItem = itemRepository.findById(dto.getItemId());
+        if (!optionalItem.isPresent()) {
+            throw new ChangeNotAllowed(String.format("item %s invalid", dto.getItemId()));
+        }
+
+        if (dto.getQuantity() <= 0) {
+            throw new ChangeNotAllowed("quantity must be greater than 0");
         }
     }
 }
