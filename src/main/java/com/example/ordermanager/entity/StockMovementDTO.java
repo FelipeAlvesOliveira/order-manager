@@ -1,6 +1,7 @@
 package com.example.ordermanager.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class StockMovementDTO {
     private Long id;
@@ -9,6 +10,7 @@ public class StockMovementDTO {
     private long quantity;
     private String status;
     private long quantityAvailable;
+    private List<OrderDTO> orderList;
 
     public Long getId() {
         return id;
@@ -56,5 +58,13 @@ public class StockMovementDTO {
 
     public void setQuantityAvailable(long quantityAvailable) {
         this.quantityAvailable = quantityAvailable;
+    }
+
+    public List<OrderDTO> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<OrderDTO> orderList) {
+        this.orderList = orderList;
     }
 }

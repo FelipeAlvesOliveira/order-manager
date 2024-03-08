@@ -7,9 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="stock_movements")
@@ -24,6 +27,9 @@ public class StockMovement {
     private long quantity;
     private String status;
     private long quantityAvailable;
+
+    @ManyToMany(mappedBy = "stockMovements")
+    private List<Order> orderList;
 
 
     public Long getId() {
@@ -74,6 +80,14 @@ public class StockMovement {
         this.quantityAvailable = quantityAvailable;
     }
 
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
+    }
+
     public static void merge(StockMovement stockMovement, StockMovementDTO dto) {
         if (stockMovement != null && dto != null) {
             if (dto.getItemId() != null) {
@@ -110,6 +124,16 @@ public class StockMovement {
             dto.setQuantity(stockMovement.getQuantity());
             dto.setStatus(stockMovement.getStatus());
             dto.setQuantityAvailable(stockMovement.getQuantityAvailable());
+            if (stockMovement.getOrderList()!=null) {
+                dto.setOrderList(
+                        stockMovement.getOrderList().stream()
+                                .map((order) -> {
+                                    order.setStockMovements(null);
+                                    return Order.toDTO(order);
+                                })
+                                .collect(Collectors.toList())
+                );
+            }
             return dto;
         }
         return null;

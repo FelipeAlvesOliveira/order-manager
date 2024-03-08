@@ -84,6 +84,7 @@ public class OrderProcessorService {
                         if (orderQuantity == 0) {
                             // update order
                             order.setStatus(OrderStatus.FINISHED.name());
+                            order.setStockMovements(movementsToDeliverOrder);
                             order = orderRepository.save(order);
                             // update used stock movements
                             stockMovementRepository.saveAll(movementsToDeliverOrder);

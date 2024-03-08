@@ -6,9 +6,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="orders")
@@ -27,6 +31,14 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
     private String status;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "orders_stock_movements",
+            joinColumns = { @JoinColumn(name = "order_id") },
+            inverseJoinColumns = { @JoinColumn(name = "stock_movements_id") }
+    )
+    private List<StockMovement> stockMovements;
 
     public Long getId() {
         return id;
@@ -76,6 +88,14 @@ public class Order {
         this.status = status;
     }
 
+    public List<StockMovement> getStockMovements() {
+        return stockMovements;
+    }
+
+    public void setStockMovements(List<StockMovement> stockMovements) {
+        this.stockMovements = stockMovements;
+    }
+
     public static void mergeWithDTO(Order order, OrderDTO dto) {
         if (order != null && dto != null) {
             if (dto.getItemId() != null) {
@@ -115,6 +135,16 @@ public class Order {
             }
             dto.setQuantity(order.getQuantity());
             dto.setStatus(order.getStatus());
+            if (order.getStockMovements()!=null) {
+                dto.setStockMovementDTOList(
+                        order.getStockMovements().stream()
+                                .map((item) -> {
+                                    item.setOrderList(null);
+                                    return StockMovement.toDTO(item);
+                                })
+                                .collect(Collectors.toList())
+                );
+            }
             return dto;
         }
         return null;
