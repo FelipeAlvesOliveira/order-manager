@@ -40,12 +40,12 @@ public class OrderProcessorService {
                  *  this way we will not process recent orders and skip existing orders
                  */
                 List<Order> orderList = orderRepository
-                        .findByItemIdAndStatus(itemId,OrderStatus.WAITING.name());
+                        .findByItemIdAndStatusOrderByIdAsc(itemId,OrderStatus.WAITING.name());
                 if (orderList != null && !orderList.isEmpty()) {
                     for (Order order : orderList) {
                         // get the list of stock movements available to deliver the order
                         List<StockMovement> stockMovementList = stockMovementRepository
-                                .findAllByItemIdAndStatusIsNot(itemId, StockMovementStatus.FINISHED.name());
+                                .findAllByItemIdAndStatusIsNotOrderByIdAsc(itemId, StockMovementStatus.FINISHED.name());
                         // if there is no stock movements available, we stop the interaction over orders
                         if (stockMovementList.isEmpty()) {
                             break;

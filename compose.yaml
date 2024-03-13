@@ -12,6 +12,10 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - EMAIL_FROM_EMAIL=${EMAIL_FROM_EMAIL}
       - EMAIL_FROM_PASSWORD=${EMAIL_FROM_PASSWORD}
+      - EMAIL_SMTP_AUTH=${EMAIL_SMTP_AUTH}
+      - EMAIL_SMTP_TTL=${EMAIL_SMTP_TTL}
+      - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST}
+      - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT}
     depends_on:
       db:
         condition: service_healthy

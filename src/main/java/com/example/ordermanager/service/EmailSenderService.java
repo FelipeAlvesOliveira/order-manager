@@ -30,6 +30,15 @@ public class EmailSenderService implements NotificationSender {
     @Value("${email.from.password}")
     private String emailFromPassword;
 
+    @Value("${email.smtp.auth}")
+    private String emailSmtpAuth;
+    @Value("${email.smtp.starttls.enable}")
+    private String emailSmtpTls;
+    @Value("${email.smtp.host}")
+    private String emailSmtpHost;
+    @Value("${email.smtp.port}")
+    private String emailSmtpPort;
+
     @Override
     public void sendNotification(Order order) {
         String emailTo = order.getUser().getEmail();
@@ -44,10 +53,10 @@ public class EmailSenderService implements NotificationSender {
 
     private Session buildSession(String emailFrom, String password) {
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp-mail.outlook.com");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", emailSmtpAuth);
+        props.put("mail.smtp.starttls.enable", emailSmtpTls);
+        props.put("mail.smtp.host", emailSmtpHost);
+        props.put("mail.smtp.port", emailSmtpPort);
 
         //create Authenticator object to pass in Session.getInstance argument
         Authenticator auth = new Authenticator() {

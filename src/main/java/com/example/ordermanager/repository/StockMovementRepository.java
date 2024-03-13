@@ -10,5 +10,5 @@ import java.util.List;
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
     public List<StockMovement> findAllByItemId(Long itemId);
 
-    public List<StockMovement> findAllByItemIdAndStatusIsNot(Long itemId, String status);
+    public List<StockMovement> findAllByItemIdAndStatusIsNotOrderByIdAsc(Long itemId, String status);
 }
